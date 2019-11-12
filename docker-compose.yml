@@ -1,0 +1,15 @@
+version: "2"
+services:
+  ansible-iisdeploy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "ansible-iisdeploy"
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./ansible_hosts:/etc/ansible/hosts
+      - ./settings.py:/opt/app/src/settings.py
+    ports:
+      - 8080:8080
