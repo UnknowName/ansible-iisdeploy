@@ -44,6 +44,7 @@ class Nginx(Thread):
         # self.update_domain()
         self.tasks.append(prepare_update(self.domain, self.update_file, self.servers))
         self.operate_servers('up')
+        self.queue.put("生成更新所需要的Task文件成功，准备执行相关Task")
         for task_file in self.tasks:
             # stdout = Popen(["ping", "-n", "10", "localhost"], stdout=PIPE, stderr=PIPE).stdout
             stdout = Popen(["ansible-playbook", task_file], stdout=PIPE, stderr=PIPE).stdout
@@ -53,7 +54,7 @@ class Nginx(Thread):
                 except UnicodeDecodeError:
                     info = line.decode("gbk").strip("\n").strip("\r")
                 if info:
-                    print(info)
+                    # print(info)
                     self.queue.put(info)
         self.queue.put("EOF")
 

@@ -1,4 +1,5 @@
-from queue import Queue
+import time
+from queue import Queue, Empty
 
 import jinja2
 import aiohttp_jinja2
@@ -16,6 +17,7 @@ async def index(request):
     return {"domains": domains}
 
 
+@aiohttp_jinja2.template("show_log.html")
 async def deploy(request):
     global LOG_QUEUE
     if request.method == "POST":
@@ -59,6 +61,7 @@ async def deploy(request):
         if gateway_type == "nginx":
             task = Nginx(settings.GATEWAY.get(gateway_type), servers, domain, upload_file, LOG_QUEUE)
             task.start()
+            return {"message": "成功加入执行队列"}
         elif gateway_type == "slb":
             print("网关类型为阿里云SLB")
             aes_key = settings.GATEWAY.get('slb').get("aes_key")
@@ -70,6 +73,22 @@ async def deploy(request):
     return web.Response(status=200, text="ok")
 
 
+async def show_log(request):
+    global LOG_QUEUE
+    ws = web.WebSocketResponse()
+    await ws.prepare(request)
+    info = ""
+    while info != "EOF":
+        time.sleep(0.5)
+        await ws.send_str(info)
+        try:
+            info = LOG_QUEUE.get(timeout=60)
+        except Empty:
+            await ws.send_str("<span style='color:red'>任务执行超时,很可能已失败，请联系管理员进一步查看详细日志信息</span>")
+            return ws
+    return ws
+
+
 if __name__ == '__main__':
     app = web.Application()
     aiohttp_jinja2.setup(
@@ -78,7 +97,7 @@ if __name__ == '__main__':
     )
     app.add_routes([
         web.get("/", index),
-        web.get("/deploy/log", deploy),
         web.post("/deploy", deploy),
+        web.get("/deploy/log", show_log),
     ])
     web.run_app(app, port=8080)
