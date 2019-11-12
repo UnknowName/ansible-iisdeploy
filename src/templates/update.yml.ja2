@@ -29,5 +29,11 @@
     - name: Run Backup Powershell Script
       win_shell: C:\tmp\backup.ps1
 
+    - name: Sleep 30 second for iis complete requests
+      pause: seconds=30
+
     - name: Execute Update Script.Recycle Site WebpoolApplication
       win_shell: C:\tmp\update.ps1
+
+    - name: Sleep 10 second for IIS startup
+      pause: seconds=10
