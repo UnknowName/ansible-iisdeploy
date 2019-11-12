@@ -1,0 +1,39 @@
+#Windows PowerShell Template
+# Generate the backup powershell script
+# Must Variables:
+#     smb_name       str   --->FileShare Username
+#     smb_password   str   --->FileShare User's Password
+#     domain         str   --->Will Backup Domain,Like www.a.com
+
+# Function Defined
+function Get-Root($webName) {
+    $disks = [Environment]::GetLogicalDrives()
+    foreach($disk in $disks) {
+        if ($disk -ne "c:\") {
+            $path = $(Get-ChildItem -Path $disk -Directory -Recurse -Name $webName -ErrorAction "SilentlyContinue")
+        }
+        if ($path -ne $null) {
+            return "$disk$path"
+        }
+    }
+}
+
+function backupWeb($sharePath, $webPath) {
+    $backupDate = $(Get-Date -Format 'yyyyMMddHH')
+    $Logs="*.log", "*.txt"
+    $Username = "{{ smb_username }}";
+    $Password = ConvertTo-SecureString "{{ smb_password }}" -AsPlainText -Force;
+    $shareCredit = New-Object System.Management.Automation.PSCredential($Username, $Password);
+
+    if (!(Test-Path "Z:")) {
+        New-PSDrive -Name  Z  -PSProvider FileSystem  -Root  $sharePath -Credential $shareCredit -Persist;
+    }
+    if (!(Test-Path "Z:\$backupDate")) {
+        New-Item -type directory -path "Z:\$backupDate"
+    }
+    copy-item -Recurse -Force -Exclude $Logs $webPath -Destination "Z:\$backupDate"
+}
+
+$sharePath="\\172.18.171.110\backups"
+$webPath = $(Get-Root {{ domain }})
+backupWeb $sharePath $webPath

@@ -1,0 +1,26 @@
+<#
+zip_file   str  Update Zip File Path D:\tmp\update.zip
+domain        str  Update domain.example www.a.com
+#>
+Import-Module WebAdministration
+
+# Function Defined
+function Get-Root($webName) {
+    $disks = [Environment]::GetLogicalDrives()
+    foreach($disk in $disks) {
+        if ($disk -ne "c:\") {
+            $path = $(Get-ChildItem -Path $disk -Directory -Recurse -Name $webName -ErrorAction "SilentlyContinue")
+        }
+        if ($path -ne $null) {
+            return "$disk$path"
+        }
+    }
+}
+
+$webRoot = $(Get-Root {{ domain }})
+
+Expand-Archive -Force -Path C:\tmp\{{ upload_file }} -DestinationPath $webRoot
+
+$site = "{{ domain }}"
+$pool = (Get-Item "IIS:\Sites\$site"| Select-Object applicationPool).applicationPool
+Restart-WebAppPool $pool

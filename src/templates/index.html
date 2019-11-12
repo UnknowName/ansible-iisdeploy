@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IIS Deployment</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <style>
+        body { margin: 10px 10px }
+        li { list-style:none }
+        .notice { color:red; font-size: 15px; margin: 10px auto}
+        div { display:none }
+    </style>
+</head>
+<body>
+    <form onsubmit="return checkData()" method="post" enctype="multipart/form-data" action="/deploy">
+        {%- for domain in domains -%}
+        <li><input type="radio" name="domain" value="{{ domain }}"/>{{ domain }}</li>
+            {%- for iis in domains[domain]["servers"] -%}
+            <div class="{{ domain|replace('.', '_') }}">
+                <input type="checkbox" name="{{ domain }}" value="{{ iis }}">{{ iis }}
+            </div>
+            {%- endfor -%}
+        {%- endfor -%}
+        <li>更新压缩文件: <input name="filename" type="file"></li>
+        <input type="submit", value="部署">
+    </form>
+    <p class="notice">* 仅支持.zip结尾的文件待</p>
+    <p class="notice">待更新的文件，以网站根目录为文件夹，以相同目录结构打成压缩包。以便部署工具进行目标站点的文件替换</p>
+</body>
+<script>
+    /*选中的Radio标签显示IIS清单，未选中的隐藏*/
+    $("input:radio[name='domain']").click(
+        function() {
+            var inputs=$('input:radio[name="domain"]');
+            for(var i=0;i<inputs.length;i++) {
+                var clsName = inputs[i].value.replace(".", "_").replace(".", "_");
+                var checked = inputs[i].checked;
+                if (checked == true) {
+                    $(`.${clsName}`).css("display", "block");
+                } else {
+                    /*未选中的Radio将Checkbox全部设置为未选中*/
+                    var value=inputs[i].value;
+                    var noSelect=$(`input:checkbox[name="${value}"]`);
+                    noSelect.prop("checked",false);
+                    $(`.${clsName}`).css("display", "none");
+                };
+            };
+        }
+    );
+    /*上传文件格式校验*/
+    function checkData() {
+        var selected=$('input:radio[name="domain"]:checked');
+        /*检查将要更新的站点有且仅选中一个*/
+        if (selected.length == 1) {
+            /*检查选中的站点的IIS服务器至少选中一台*/
+            var selectName = selected[0].value;
+            var servers = $(`input:checkbox[name="${selectName}"]:checked`);
+            //console.log(servers);
+            if (servers.length < 1) {
+                alert("至少选择一台后端服务器进行更新");
+                return false;
+            };
+        } else {
+           alert("请选择且只选择一个站点进行更新！");
+           return false;
+        };
+        var upFile= $("input:file")[0];
+        var nameArray = upFile.value.split("\\");
+        var fileName = nameArray[nameArray.length - 1];
+        var fileTypes = fileName.split(".");
+        var fileType = fileTypes[fileTypes.length -1 ];
+        //console.log(fileType);
+        if (fileType == "zip") {
+            return true;
+        } else {
+            alert("请上传正确格式的文件，仅支持zip类型的文件！");
+            return false;
+        };
+        return false;
+    };
+</script>
+</html>

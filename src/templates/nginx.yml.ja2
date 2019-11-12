@@ -1,0 +1,22 @@
+- hosts:
+  {% for ngx in nginxs -%}
+  - {{ ngx }}
+  {% endfor %}
+  gather_facts: no
+  tasks:
+    {% for iis in servers %}
+    - name: Comment {{ iis }} in NGINX upstream
+      lineinfile:
+        path: /etc/nginx/conf.d/{{ domain }}.conf
+        {% if action == "down" -%}
+        regexp: '(\s*server\s*{{ iis }}.*)'
+        line: '#\1'
+        {% else -%}
+        regexp: '#(\s*server\s*{{ iis }}.*)'
+        line: '\1'
+        {% endif -%}
+        backrefs: yes
+    {% endfor %}
+
+    - name: Reload NGINX
+      shell: nginx -t && systemctl reload nginx

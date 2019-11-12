@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <style>
+        body { margin: auto 10px }
+        li { list-style:none }
+        #loading { display:none }
+        #log { margin: 5px auto }
+        .log-item { font-size: 15px; margin: 1px 10px; color: green }
+        .log-error { font-size: 15px; margin: 1px 10px; color:red }
+    </style>
+    <title>Deploy Logs</title>
+</head>
+<body>
+<p id="log">
+</p>
+<img  id="loading" src="data:image/gif;base64,R0lGODlhEAAQAPMOAO/v797e3qysrJycnIyMjHJycmNjY1JSUjExMSEhIb29vUJCQhAQEAAAAM
+XFxQAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFBwAOACwAAAAAEAAQAAAEcNBJB6g5dWoXUgBNE1CbFDQJwIjAqAUj0RArnEnAMoPMcXymTEDHULhwQBxAgD
+jiNISFb1CiAK7RxYJaul6tisItqAHQFs6WcVJIDMwEWEBAWXNGAYRCMAjEnxMABwUOA1QBbyUBBSOGEgpjJQoKVREAIfkEBQcADgAsAAAAAA8AEAAABG/QSQ
+doMbVOGVYASRMEjLA5QYOATBAq0+gQzZAwQ7NMwIEDDMSl0chUAgeVzKH4fCQAgMBz0jgEhkIBdqJEBweDgVuNegMDK9QqXRwCm+hzthAABoKRDPCUBQwBCn
+ZNUDwFA0wmgWoUaYkcjBtLGxEAIfkEBQcADgAsAAAAABAADwAABG7QSQfoILXOGUwASwIAiLBJAXOA4tEo2+cMjRAKzeIEMFCUpAWBgGgECA3jzqAKBFC0JI
+wCUBg0EkWDMFEMB8/TaCwomKfiMTUgwEpGG4DAgIkDZJJBQVHlq+8aMkdOH3huAAMwThR4cW07YXASEQAh+QQFBwAOACwAAAAAEAAQAAAEb9BJB+gYtc4ZCg
+DH8h3KJgWIFwJGU06fMzBKqDQGFVCEEQCLwmXRAAwajEon9TspEg2X5KPwbAK4H0AxEAh2JgNjTLoMwJtWFEEBBBQaTmCeCRAwm09Twv3RP3UaMVuAboJ5Cj
+uDe3lNMW0mJo8mEQAh+QQFBwAKACwAAAAAEAAOAAAEYlBJBSghtc4ZCgBJ8iXOJgWJFwIIuX0KQYZCglABVSAOeFwrmUjRSQU0AUcoIZB8HAbNKXE4AgIDgS
+BnOix5FwJ301pSrseNspq+aqUKZYgb2KI/MPMZh79WHAUvATkwfhMRACH5BAUHAA4ALAAAAAAQABAAAAR40EkHqFK1zgkEAETxFcEmAYVHEGBSclVgBGvAEF
+QJKEIADpcCYpdYZBQEjAYQODQQr0/AswEsBh9pwGdyDA6HBWG71WwGiQTDQGF+NgHEoNymS6aNxiLqy34YDU0NDBkZfR0NBw48VVxvCQ0KXVltDgENA11VSx
+sRACH5BAUHAA4ALAAAAAAQABAAAARy0EkHaAi1zgkUAMPwDcEmgZggDkvJVQEBqMEiWBY2K9dgdIufhfc5BQyMg+sDwGwABgFzqtkIDIaDbGpyCBYIRIHSLE
+4CB2nxc6kGFI2G0DItGBINaAORyWAYDQQNY29POoABeC5PTIgBDDddJwd8FBsRACH5BAUHAA4ALAEAAQAPAA8AAARq0DkQAFDKiiD7rdhlcJLlBBkWGMoETB
+UVzEJBHYRF6WVQIAWOzuQhZIbEjkNRaAqGSonCcMBZYkoAC1mZ9RING8zSaBAIiwSA0Fjw2IVEYmA+tSSBcoDBACAaJB0CDRl8FAl3SkJVLy8dEQAh+QQFBw
+AOACwAAAAAEAAQAAAEc9BJByi4dOp7Q7hKpVEf4JmDKGGm+RGBZXG0IphEapXiNRiD2AwzAQRptJEjQGjekqNAYSqwKBKKDYyzXDQawVVgwSBUAIwGItBIDA
+SGhTFhqAyyhAYBgRCAl0ISbAkAfAAHDIETAokACQgmC1lKZ1NnGhEAIfkEBQcADgAsAAABABAADwAABG/QSUArDUBqB7ANSqZRnEcpAZdd1oUFQ6iaEyAQst
+qJE1oZjKBhIwkIjgpEY7kgOmADXAfGSI0GtMBimaMYEINVomEAJBZHwgGgOBQyghShMTgsFAxBaRNoIAB2AAUIVhsKCRgLCx0GhRsrBAQrGxEAIfkEBQcADg
+AsAAABABAADwAABG/QSUCrldiBYCnPQaBx1UdpTUN0G6V8Stp82vYCE1A0QtZWhoTQkJEEFMjAgcEsFB1HhYDDESxEGMC0Aj2kaBSCQYADIBoFwOKAHBgAis
+IA93IMeAVDANHbgBgLOm8DV08BVwAGBxQFWEVlA3MaGREAIfkEBQcADgAsAAABAA8ADwAABGvQScUCuBjIrVrKgLUFgXM0AiZiSUMETaNeYtA2gyDN2jUwio
+0DREAsFgThjhQoJJ5JZYiEURxKG4DC0is0KpohQEBQXE4EgKFAEgxCOQfJQVEQ2IbSJYswAO5jBWEjeX+CAANYQj0CKUMbEQA7"/>
+<script>
+/* WebSocket查看实时日志输出 */
+function logOutput() {
+    var logDiv = $("#log");
+    var loadImg = $("#loading");
+    if (!window.WebSocket){
+        alert('This browser does not supports WebSocket');
+    };
+    var scheme = window.location.protocol;
+    var host = window.location.host;
+    var path = "/deploy/log";
+    if (scheme == "http:") {
+        wsUrl = `ws://${host}${path}`;
+    } else if (scheme == "https:") {
+        wsUrl = `wss://${host}${path}`;
+    } else {
+        alert("未识别的协议，连接WebSocket失败，将无法查看日志！");
+    };
+    //console.log(wsUrl);
+    var ws = new WebSocket(wsUrl);
+    ws.onopen = function(evt) {
+        console.log(`WebSocket Connect at ${wsUrl}`);
+        loadImg.css("display", "block");
+    };
+    ws.onerror = function(evt) {
+        console.log("Connect failed");
+    };
+    ws.onmessage = function(evt) {
+        var time = getFormatDate();
+        var data = evt.data;
+        if (data.match("FAILED")) {
+            var info = data.split("=>");
+            var logObj = $.parseJSON(info[1]);
+            logDiv.append(`<li class="log-error">${time}&nbsp;ERROR: ${logObj.msg}<li>`);
+        } else {
+            logDiv.append(`<li class="log-item">${time}&nbsp;${data}</li>`);
+        };
+    };
+    ws.onclose = function(evt) {
+        loadImg.css("display", "none");
+        logDiv.append("<p class='log-item'>Finished</p>");
+        console.log("WebSocket Closed!");
+    };
+};
+/*获取系统时间*/
+function getFormatDate(){
+    var nowDate = new Date();
+    var year = nowDate.getFullYear();
+    var month = nowDate.getMonth() + 1 < 10 ? "0" + (nowDate.getMonth() + 1) : nowDate.getMonth() + 1;
+    var date = nowDate.getDate() < 10 ? "0" + nowDate.getDate() : nowDate.getDate();
+    var hour = nowDate.getHours() < 10 ? "0" + nowDate.getHours() : nowDate.getHours();
+    var minute = nowDate.getMinutes() < 10 ? "0" + nowDate.getMinutes() : nowDate.getMinutes();
+    var second = nowDate.getSeconds() < 10 ? "0" + nowDate.getSeconds() : nowDate.getSeconds();
+    return `${year}-${month}-${date} ${hour}:${minute}:${second}`
+};
+/*函数调用*/
+logOutput();
+</script>
+</body>
+</html>
