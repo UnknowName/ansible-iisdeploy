@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
     <style>
-        body { margin: auto 10px }
+        body { margin: auto 10px}
         li { list-style:none }
         #loading { display:none }
         #log { margin: 5px auto }
@@ -14,6 +14,7 @@
     <title>Deploy Logs</title>
 </head>
 <body>
+  {{ message }},控制台输出:
 <p id="log">
 </p>
 <img  id="loading" src="data:image/gif;base64,R0lGODlhEAAQAPMOAO/v797e3qysrJycnIyMjHJycmNjY1JSUjExMSEhIb29vUJCQhAQEAAAAM
@@ -61,6 +62,7 @@ function logOutput() {
     };
     ws.onerror = function(evt) {
         console.log("Connect failed");
+        alert("连接WebSocket失败，请联系管理员！");
     };
     ws.onmessage = function(evt) {
         var time = getFormatDate();
@@ -69,6 +71,9 @@ function logOutput() {
             var info = data.split("=>");
             var logObj = $.parseJSON(info[1]);
             logDiv.append(`<li class="log-error">${time}&nbsp;ERROR: ${logObj.msg}<li>`);
+        } else if(data == "" || data == undefined) {
+            //console.log(data);
+            ;
         } else {
             logDiv.append(`<li class="log-item">${time}&nbsp;${data}</li>`);
         };
@@ -79,6 +84,7 @@ function logOutput() {
         console.log("WebSocket Closed!");
     };
 };
+
 /*获取系统时间*/
 function getFormatDate(){
     var nowDate = new Date();
