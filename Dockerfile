@@ -7,7 +7,6 @@ RUN adduser -D -u 120002 -h /opt/app app \
     && echo "StrictHostKeyChecking=no" > .ssh/config \
     && sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
     && apk add gcc g++ make libffi-dev openssl-dev openssh-client \
-    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple/ -r requirements.txt\
     && pip install --no-cache-dir -i https://mirrors.aliyun.com/pypi/simple/ pywinrm ansible \
     && apk del gcc g++ make libffi-dev openssl-dev \
