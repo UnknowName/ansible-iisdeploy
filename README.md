@@ -10,9 +10,10 @@
 
 - Windows主机已开启`Ansible`支持。详情请参考[Ansible WindowsGuides](https://docs.ansible.com/ansible/latest/user_guide/windows.html)
 - IIS站点(Site)名称，应用池(ApplicationPool),网站根目录均为域名。如站点名称为test.aaa.com,应用池名也为test.aaa.com,网站的根目录文件也为
-test.aaaa.com。
-- IIS站点文件不能放在C盘。
+test.aaaa.com
+- IIS站点文件不能放在C盘
 - 提供一台内部文件共享服务，如`Samba`或者`Windows共享`
+- 网关为`NGINX`时,站点配置文件请放在`/etc/conf.d/`目录下,且文件名为`域名.conf`如`test.aaa.com.conf`
 
 ## Deploy
 
@@ -54,11 +55,17 @@ DOMAINS = {
 }
 
 GATEWAY = {
+    # NGINX的服务器地址
     "nginx": ["128.0.255.10", "128.0.255.3"],
+    # 阿里云SLB
     "slb": {
+        # 阿里云的AES KEY
         "aes_key": "aes_key",
+        # 阿里云的AES SECRET
         "aes_secret": "aes_secret",
+        # SLB所在的区域
         "region": "shengzheng",
+        # SLB的ID
         "id": "slb_id",
     },
 }
@@ -67,4 +74,18 @@ GATEWAY = {
 BACKUP_SERVER_USER = "share"
 
 BACKUP_SERVER_PASSWORD = "share"
+```
+
+### 3.替换模板中的文件服务器地址
+
+```shell
+src/templates/backup.ps1.ja2
+...
+$sharePath="\\172.18.171.110\backups"
+```
+
+### 4.All Ready
+
+```shell
+docker-compose up -d
 ```
