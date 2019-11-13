@@ -53,9 +53,13 @@ async def deploy(request):
                         f.write(chunk)
             # 读取下一个field，直到为None
             field = await data.next()
-        gateway_type = settings.DOMAINS.get(domain, {}).get("gateway")
-        all_servers = settings.DOMAINS.get(domain, {}).get("servers")
+        gateway_type = settings.DOMAINS.get(domain, {}).get("gateway", "")
+        all_servers = settings.DOMAINS.get(domain, {}).get("servers", ())
         LOG_QUEUE.put("本次部署的站点为{},更新的服务器为{}".format(domain, servers))
+        if domain not in settings.DOMAINS:
+            return web.Response(status=200, text="将要更新的域名未配置，请联系管理员添加")
+        if not servers:
+            return web.Response(status=200, text="请至少提供一台将要更新的主机")
         if len(servers) >= len(all_servers):
             return web.Response(status=200, text="不能一次性全部更新，将会导致服务不可用")
         # 后端条件检查
