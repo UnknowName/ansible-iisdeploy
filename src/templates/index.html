@@ -33,7 +33,9 @@
         function() {
             var inputs=$('input:radio[name="domain"]');
             for(var i=0;i<inputs.length;i++) {
-                var clsName = inputs[i].value.replace(".", "_").replace(".", "_");
+                /*正则替换"."为"_",g表示替换全部
+                var clsName = inputs[i].value.replace(/\./g, "_");
+                //console.log(clsName);
                 var checked = inputs[i].checked;
                 if (checked == true) {
                     $(`.${clsName}`).css("display", "block");
