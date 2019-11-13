@@ -67,7 +67,7 @@ function logOutput() {
     ws.onmessage = function(evt) {
         var time = getFormatDate();
         var data = evt.data;
-        if (data.match("FAILED")) {
+        if (data.match("FAILED") || data.match("UNREACHABLE")) {
             var info = data.split("=>");
             var logObj = $.parseJSON(info[1]);
             logDiv.append(`<li class="log-error">${time}&nbsp;ERROR: ${logObj.msg}<li>`);
