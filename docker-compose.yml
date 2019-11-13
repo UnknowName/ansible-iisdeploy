@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: ansible-iisdeploy
     container_name: "ansible-iisdeploy"
     restart: always
     environment:

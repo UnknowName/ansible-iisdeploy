@@ -19,8 +19,9 @@ GATEWAY = {
     },
 }
 
-# BACKUP_SERVER = r"\\128.0.100.170\backups"
-BACKUP_SERVER_USER = "share"
-BACKUP_SERVER_PASSWORD = "share"
-# BACKUP_TEMPLATE = "backup.ps1.ja2"
-# UPDATE_TEMPLATE = "update.ps1.ja2"
+BACKUP_SERVER = r"\\128.0.100.170\backups"
+
+BACKUP_SERVER_USER = r"admin"
+
+BACKUP_SERVER_PASSWORD = r"admin"
+
