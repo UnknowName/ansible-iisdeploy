@@ -23,8 +23,8 @@
 
     - name: Copy Update Files
       win_copy:
-        src: {{ upload_file }}
-        dest: C:\tmp\
+        src: update.zip
+        dest: C:\tmp\update.zip
 
     - name: Run Backup Powershell Script
       win_shell: C:\tmp\backup.ps1

@@ -1,5 +1,5 @@
 <#
-zip_file   str  Update Zip File Path D:\tmp\update.zip
+zip_file      str  Update Zip File Path D:\tmp\update.zip
 domain        str  Update domain.example www.a.com
 #>
 Import-Module WebAdministration
@@ -17,10 +17,20 @@ function Get-Root($webName) {
     }
 }
 
+function Add-Task() {
+    if (!(Test-Path "$webRoot\version.txt")) {
+        New-Item $webRoot\version.txt
+    }
+    $updateDate = $(Get-Date -Format 'yyyy-MM-dd HH:mm')
+    Set-Content $webRoot\version.txt $updateDate
+    # Clean Temp files
+    Remove-Item 'C:\tmp\*' -Recurse
+}
+
 $webRoot = $(Get-Root {{ domain }})
-
-Expand-Archive -Force -Path C:\tmp\{{ upload_file }} -DestinationPath $webRoot
-
+Expand-Archive -Force -Path C:\tmp\update.zip -DestinationPath $webRoot
 $site = "{{ domain }}"
 $pool = (Get-Item "IIS:\Sites\$site"| Select-Object applicationPool).applicationPool
 Restart-WebAppPool $pool
+
+Add-Task

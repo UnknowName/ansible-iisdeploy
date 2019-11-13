@@ -1,9 +1,10 @@
 #Windows PowerShell Template
 # Generate the backup powershell script
 # Must Variables:
-#     smb_name       str   --->FileShare Username
-#     smb_password   str   --->FileShare User's Password
-#     domain         str   --->Will Backup Domain,Like www.a.com
+#     backup_server     str   --->FileShare server
+#     backup_username   str   --->FileShare Username
+#     backup_password   str   --->FileShare User's Password
+#     domain            str   --->Will Backup Domain,Like www.a.com
 
 # Function Defined
 function Get-Root($webName) {
@@ -21,8 +22,8 @@ function Get-Root($webName) {
 function backupWeb($sharePath, $webPath) {
     $backupDate = $(Get-Date -Format 'yyyyMMddHH')
     $Logs="*.log", "*.txt"
-    $Username = "{{ smb_username }}";
-    $Password = ConvertTo-SecureString "{{ smb_password }}" -AsPlainText -Force;
+    $Username = "{{ backup_username }}";
+    $Password = ConvertTo-SecureString "{{ backup_password }}" -AsPlainText -Force;
     $shareCredit = New-Object System.Management.Automation.PSCredential($Username, $Password);
 
     if (!(Test-Path "Z:")) {
@@ -34,6 +35,6 @@ function backupWeb($sharePath, $webPath) {
     copy-item -Recurse -Force -Exclude $Logs $webPath -Destination "Z:\$backupDate"
 }
 
-$sharePath="\\172.18.171.110\backups"
+$sharePath="{{ backup_server }}"
 $webPath = $(Get-Root {{ domain }})
 backupWeb $sharePath $webPath

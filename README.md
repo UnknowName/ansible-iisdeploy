@@ -71,20 +71,15 @@ GATEWAY = {
 }
 
 # 文件共享的用户名与密码
-BACKUP_SERVER_USER = "share"
+BACKUP_SERVER = r"\\128.0.100.170\backups"
 
-BACKUP_SERVER_PASSWORD = "share"
+BACKUP_SERVER_USER = r"share"
+
+BACKUP_SERVER_PASSWORD = r"share"
 ```
 
-### 3.替换模板中的文件服务器地址
 
-```shell
-src/templates/backup.ps1.ja2
-...
-$sharePath="\\172.18.171.110\backups"
-```
-
-### 4.All Ready
+### 3.All Ready
 
 ```shell
 docker-compose up -d
