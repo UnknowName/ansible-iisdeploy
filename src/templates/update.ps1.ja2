@@ -17,12 +17,19 @@ function Get-Root($webName) {
     }
 }
 
-function Add-Task() {
-    if (!(Test-Path "$webRoot\version.txt")) {
-        New-Item $webRoot\version.txt
-    }
+function Add-Task($webRoot) {
     $updateDate = $(Get-Date -Format 'yyyy-MM-dd HH:mm')
-    Set-Content $webRoot\version.txt $updateDate
+    if (Test-Path "$webRoot\wwwroot") {
+        if (!(Test-Path "$webRoot\wwwroot\version.txt")) {
+            New-Item $webRoot\wwwroot\version.txt
+        }
+        Set-Content $webRoot\wwwroot\version.txt $updateDate
+    } else {
+        if (!(Test-Path "$webRoot\version.txt")) {
+            New-Item $webRoot\version.txt
+        }
+        Set-Content $webRoot\version.txt $updateDate
+    }
     # Clean Temp files
     Remove-Item 'C:\tmp\*' -Recurse
 }
@@ -33,4 +40,4 @@ $site = "{{ domain }}"
 $pool = (Get-Item "IIS:\Sites\$site"| Select-Object applicationPool).applicationPool
 Restart-WebAppPool $pool
 
-Add-Task
+Add-Task $webRoot
