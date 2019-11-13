@@ -11,6 +11,6 @@ services:
       - TZ=Asia/Shanghai
     volumes:
       - ./ansible_hosts:/etc/ansible/hosts
-      - ./settings.py:/opt/app/src/settings.py
+      - ./settings.py:/opt/app/settings.py
     ports:
       - 8080:8080
