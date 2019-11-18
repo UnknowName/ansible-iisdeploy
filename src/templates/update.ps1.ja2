@@ -34,10 +34,16 @@ function Add-Task($webRoot) {
     Remove-Item 'C:\tmp\*' -Recurse
 }
 
+function Stop-IIS($domain) {
+    $pool = (Get-Item "IIS:\Sites\$domain" | Select-Object applicationPool).applicationPool
+    Stop-WebAppPool $pool
+}
+
 $webRoot = $(Get-Root {{ domain }})
+Stop-IIS {{ domain }}
 Expand-Archive -Force -Path C:\tmp\update.zip -DestinationPath $webRoot
 $site = "{{ domain }}"
-$pool = (Get-Item "IIS:\Sites\$site"| Select-Object applicationPool).applicationPool
+$pool = (Get-Item "IIS:\Sites\$site" | Select-Object applicationPool).applicationPool
 Restart-WebAppPool $pool
 
 Add-Task $webRoot
